@@ -1,7 +1,7 @@
 #pragma once
 
-#include <iostream>
 #include <iomanip>
+#include <memory>
 #include <variant>
 #include <vector>
 
@@ -29,10 +29,10 @@ class Curves
 {
 public:
     Curves() = default;
-    Curves &AddCurve(std::variant<Circle, Ellipse, Helix>);
+    Curves &AddCurve(std::variant<std::shared_ptr<Circle>, std::shared_ptr<Ellipse>, std::shared_ptr<Helix>>);
     Curves &CollectOnlyCircles();
 
-    std::vector<std::variant<Circle, Ellipse, Helix>> &GetCurves();
+    std::vector<std::variant<std::shared_ptr<Circle>, std::shared_ptr<Ellipse>, std::shared_ptr<Helix>>> &GetCurves();
 
     Curves &SortCircles();
 
@@ -44,8 +44,8 @@ public:
     void PrintCircles(std::ostream &out);
 
 private:
-    std::vector<std::variant<Circle, Ellipse, Helix>> curves_;
-    std::vector<Circle *> circles_;
+    std::vector<std::variant<std::shared_ptr<Circle>, std::shared_ptr<Ellipse>, std::shared_ptr<Helix>>> curves_;
+    std::vector<std::shared_ptr<Circle>> circles_;
 };
 
 /*

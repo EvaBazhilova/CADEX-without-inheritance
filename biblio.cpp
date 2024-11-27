@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <math.h>
 
-Curves &Curves::AddCurve(std::variant<Circle, Ellipse, Helix> curve)
+Curves &Curves::AddCurve(std::variant<std::shared_ptr<Circle>, std::shared_ptr<Ellipse>, std::shared_ptr<Helix>> curve)
 {
     curves_.push_back(curve);
     return *this;
@@ -14,22 +14,22 @@ Curves &Curves::CollectOnlyCircles()
 {
     for (size_t i = 0; i < curves_.size(); ++i)
     {
-        if (std::holds_alternative<Circle>(curves_[i]))
+        if (std::holds_alternative<std::shared_ptr<Circle>>(curves_[i]))
         {
-            circles_.push_back(&std::get<Circle>(curves_[i]));
+            circles_.push_back(std::get<std::shared_ptr<Circle>>(curves_[i]));
         }
     }
     return *this;
 }
 
-std::vector<std::variant<Circle, Ellipse, Helix>> &Curves::GetCurves()
+std::vector<std::variant<std::shared_ptr<Circle>, std::shared_ptr<Ellipse>, std::shared_ptr<Helix>>> &Curves::GetCurves()
 {
     return curves_;
 }
 
 Curves &Curves::SortCircles()
 {
-    std::sort(circles_.begin(), circles_.end(), [](const Circle *lhs, const Circle *rhs)
+    std::sort(circles_.begin(), circles_.end(), [](const std::shared_ptr<Circle>lhs, const std::shared_ptr<Circle> rhs)
               { return lhs->GetRadius() < rhs->GetRadius(); });
     return *this;
 }
@@ -48,17 +48,17 @@ void Curves::PrintPointsAndDerivative(std::ostream &out)
 {
     for (size_t i = 0; i < curves_.size(); ++i)
     {
-        if (std::holds_alternative<Circle>(curves_[i]))
+        if (std::holds_alternative<std::shared_ptr<Circle>>(curves_[i]))
         {
-            out << std::get<Circle>(curves_[i]).GetPoint(M_PI / 4) << " " << std::get<Circle>(curves_[i]).GetDerivative(M_PI / 4);
+            out << std::get<std::shared_ptr<Circle>>(curves_[i])->GetPoint(M_PI / 4) << " " << std::get<std::shared_ptr<Circle>>(curves_[i])->GetDerivative(M_PI / 4);
         }
-        else if (std::holds_alternative<Ellipse>(curves_[i]))
+        else if (std::holds_alternative<std::shared_ptr<Ellipse>>(curves_[i]))
         {
-            out << std::get<Ellipse>(curves_[i]).GetPoint(M_PI / 4) << " " << std::get<Ellipse>(curves_[i]).GetDerivative(M_PI / 4);
+            out << std::get<std::shared_ptr<Ellipse>>(curves_[i])->GetPoint(M_PI / 4) << " " << std::get<std::shared_ptr<Ellipse>>(curves_[i])->GetDerivative(M_PI / 4);
         }
         else
         {
-            out << std::get<Helix>(curves_[i]).GetPoint(M_PI / 4) << " " << std::get<Helix>(curves_[i]).GetDerivative(M_PI / 4);
+            out << std::get<std::shared_ptr<Helix>>(curves_[i])->GetPoint(M_PI / 4) << " " << std::get<std::shared_ptr<Helix>>(curves_[i])->GetDerivative(M_PI / 4);
         }
         out << std::endl;
     }
@@ -68,17 +68,17 @@ void Curves::PrintCurves(std::ostream &out)
 {
     for (size_t i = 0; i < curves_.size(); ++i)
     {
-        if (std::holds_alternative<Circle>(curves_[i]))
+        if (std::holds_alternative<std::shared_ptr<Circle>>(curves_[i]))
         {
-            out << "Circle with radius " << std::get<Circle>(curves_[i]).GetRadius();
+            out << "Circle with radius " << std::get<std::shared_ptr<Circle>>(curves_[i])->GetRadius();
         }
-        else if (std::holds_alternative<Ellipse>(curves_[i]))
+        else if (std::holds_alternative<std::shared_ptr<Ellipse>>(curves_[i]))
         {
-            out << "Ellipse with parameters " << std::get<Ellipse>(curves_[i]).GetParameters().first << " " << std::get<Ellipse>(curves_[i]).GetParameters().second;
+            out << "Ellipse with parameters " << std::get<std::shared_ptr<Ellipse>>(curves_[i])->GetParameters().first << " " << std::get<std::shared_ptr<Ellipse>>(curves_[i])->GetParameters().second;
         }
         else
         {
-            out << "Helix with parameters " << std::get<Helix>(curves_[i]).GetParameters().first << " " << std::get<Helix>(curves_[i]).GetParameters().second;
+            out << "Helix with parameters " << std::get<std::shared_ptr<Helix>>(curves_[i])->GetParameters().first << " " << std::get<std::shared_ptr<Helix>>(curves_[i])->GetParameters().second;
         }
         out << std::endl;
     }
